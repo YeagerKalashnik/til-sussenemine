@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>Til sussen min</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --night: #14102b;
+        --night2: #2a1d55;
+        --blush: #ffb3c7;
+        --rose: #ff5d8f;
+        --gold: #ffd98a;
+        --ink: #fdf3f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--night);
+        background-image:
+          radial-gradient(1.5px 1.5px at 20px 30px, #fff8, transparent),
+          radial-gradient(1px 1px at 90px 120px, #fff6, transparent),
+          radial-gradient(2px 2px at 160px 60px, #ffd98a88, transparent);
+        background-size: 200px 200px;
+        color: var(--ink);
+        font-family: Nunito, system-ui, sans-serif;
+        font-weight: 600;
+        line-height: 1.5;
+        padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+      }
+      body.lock {
+        overflow: hidden;
+        height: 100vh;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "DM Serif Display", Georgia, serif;
+        font-weight: 400;
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(40px, 10vw, 76px);
+        line-height: 1.05;
+        color: var(--blush);
+      }
+      h2 {
+        font-size: clamp(28px, 6vw, 40px);
+        color: var(--gold);
+        margin-bottom: 6px;
+      }
+      section {
+        max-width: 660px;
+        margin: 0 auto;
+        padding: 72px 22px;
+        text-align: center;
+      }
+      .sub {
+        opacity: 0.8;
+        margin: 0 0 28px;
+      }
+      img.ph,
+      .pimg {
+        width: 100%;
+        border-radius: 22px;
+        display: block;
+      }
+      .ptxt {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--night2);
+        aspect-ratio: 4/3;
+        border-radius: 22px;
+        font-size: 56px;
+      }
+      .ptxt small {
+        font-size: 13px;
+        opacity: 0.7;
+        margin-top: 6px;
+      }
+      button {
+        font: inherit;
+        font-weight: 800;
+        font-size: 18px;
+        background: var(--rose);
+        color: #fff;
+        border: 0;
+        border-radius: 999px;
+        padding: 13px 28px;
+        cursor: pointer;
+        box-shadow: 0 6px 24px #ff5d8f55;
+        transition: transform 0.15s;
+      }
+      button:hover {
+        transform: scale(1.05);
+      }
+      button:active {
+        transform: scale(0.97);
+      }
+      button:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 3px;
+      }
+      /* gate */
+      #gate {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: var(--night);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 26px;
+        transition:
+          opacity 1s 0.6s,
+          visibility 0s 1.6s;
+      }
+      #gate.gone {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .env {
+        position: relative;
+        width: 240px;
+        height: 160px;
+        background: var(--blush);
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 20px 60px #ff5d8f44;
+        animation: bob 2.4s ease-in-out infinite;
+      }
+      .env:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 10px;
+        background:
+          linear-gradient(135deg, transparent 49%, #e88aa8 50%) left/50% 100%
+            no-repeat,
+          linear-gradient(225deg, transparent 49%, #e88aa8 50%) right/50% 100%
+            no-repeat;
+      }
+      .flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 90px;
+        background: #f58fae;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        transform-origin: top;
+        transition: transform 0.7s;
+      }
+      .seal {
+        position: absolute;
+        left: 50%;
+        top: 70px;
+        transform: translateX(-50%);
+        font-size: 34px;
+        z-index: 2;
+        transition: opacity 0.3s;
+      }
+      .env.open {
+        animation: none;
+      }
+      .env.open .flap {
+        transform: rotateX(180deg);
+      }
+      .env.open .seal {
+        opacity: 0;
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(-10px) rotate(-1.5deg);
+        }
+      }
+      /* counter */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+      }
+      .cell {
+        background: #ffffff12;
+        border-radius: 14px;
+        padding: 12px 2px;
+      }
+      .cell b {
+        display: block;
+        font-family: "DM Serif Display", serif;
+        font-weight: 400;
+        font-size: clamp(22px, 6vw, 36px);
+        color: var(--blush);
+      }
+      .cell span {
+        font-size: 11px;
+        opacity: 0.75;
+      }
+      .stats {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 26px;
+        flex-wrap: wrap;
+      }
+      .stat {
+        flex: 1 1 150px;
+        background: #ffffff12;
+        border-radius: 16px;
+        padding: 16px;
+      }
+      .stat b {
+        display: block;
+        font-family: "DM Serif Display", serif;
+        font-weight: 400;
+        font-size: 34px;
+        color: var(--gold);
+      }
+      /* reasons */
+      .reasons {
+        display: grid;
+        gap: 12px;
+        text-align: left;
+      }
+      .r {
+        background: #ffffff12;
+        border-left: 4px solid var(--rose);
+        border-radius: 6px 16px 16px 6px;
+        padding: 16px 18px;
+      }
+      /* wheel */
+      .wheel {
+        position: relative;
+        width: min(320px, 86vw);
+        margin: 20px auto;
+      }
+      #wc {
+        width: 100%;
+        transition: transform 5s cubic-bezier(0.1, 0.7, 0.1, 1);
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 6px var(--gold),
+          0 14px 50px #ff5d8f55;
+      }
+      .pin {
+        position: absolute;
+        left: 50%;
+        top: -14px;
+        transform: translateX(-50%);
+        font-size: 34px;
+        filter: drop-shadow(0 2px 2px #000a);
+      }
+      #win {
+        min-height: 34px;
+        font-size: 22px;
+        color: var(--gold);
+        margin-top: 16px;
+        font-weight: 800;
+      }
+      /* compat */
+      .bar {
+        height: 22px;
+        border-radius: 99px;
+        background: #ffffff1f;
+        overflow: hidden;
+        margin: 18px 0 8px;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--rose), var(--gold));
+      }
+      .pair {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        align-items: center;
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      /* ===== KARUSELL: låst størrelse, pilene følger rammen ===== */
+      .carw {
+        --h: min(460px, 68vh);
+        position: relative;
+        width: min(100%, 380px);
+        margin: 0 auto;
+      }
+      .car {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 14px;
+        scrollbar-width: none;
+      }
+      .car::-webkit-scrollbar {
+        display: none;
+      }
+      .car figure {
+        flex: 0 0 100%;
+        scroll-snap-align: center;
+        margin: 0;
+      }
+      .car figcaption {
+        margin-top: 10px;
+        font-size: 17px;
+        min-height: 3em;
+      }
+      .mf {
+        position: relative;
+        height: var(--h);
+        border-radius: 22px;
+        overflow: hidden;
+        background: var(--night2);
+      }
+      .mf img,
+      .mf video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        border-radius: 0;
+      } /* bytt contain -> cover for å fylle hele rammen (kan beskjære) */
+      .mf .ptxt {
+        height: 100%;
+        aspect-ratio: auto;
+        border-radius: 0;
+      }
+      .arr {
+        position: absolute;
+        top: calc(var(--h) / 2);
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        background: #14102bcc;
+        box-shadow: none;
+        z-index: 3;
+        font-size: 20px;
+      }
+      .arr:hover {
+        transform: translateY(-50%) scale(1.08);
+      }
+      .arr:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+      .arr.l {
+        left: 6px;
+      }
+      .arr.r {
+        right: 6px;
+      }
+      .vol {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 26px 16px 12px;
+        background: linear-gradient(transparent, #000b);
+        z-index: 2;
+      }
+      .vol input {
+        flex: 1;
+        accent-color: var(--rose);
+        touch-action: none;
+        cursor: pointer;
+      }
+      .mute {
+        padding: 4px 10px;
+        font-size: 18px;
+        background: #ffffff26;
+        box-shadow: none;
+        border-radius: 10px;
+      }
+      .mute:hover {
+        transform: none;
+      }
+      .ctr {
+        margin-top: 6px;
+        font-size: 15px;
+        opacity: 0.75;
+        min-height: 1.5em;
+      }
+      /* moon */
+      .moon {
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 26px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 35%,
+          #fffbe8,
+          #ffe9a8 60%,
+          #e8c870
+        );
+        box-shadow: 0 0 60px 20px #ffd98a55;
+        animation: glow 4s ease-in-out infinite alternate;
+      }
+      @keyframes glow {
+        to {
+          box-shadow: 0 0 90px 34px #ffd98a77;
+        }
+      }
+      .sign {
+        font-family: "DM Serif Display", serif;
+        font-size: 30px;
+        color: var(--blush);
+        margin-top: 14px;
+      }
+      .fh {
+        position: fixed;
+        pointer-events: none;
+        animation: fio 4.5s ease-in-out forwards;
+        z-index: 1;
+      }
+      @keyframes fio {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0.6);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(1.1);
+        }
+      }
+      #conf {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 60;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01s !important;
+          transition-duration: 0.01s !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="lock">
+    <canvas id="conf"></canvas>
+
+    <div id="gate">
+      <p style="font-size: 20px; margin: 0">Du har fått noe.....</p>
+      <div class="env" id="env" role="button" tabindex="0" aria-label="Åpne">
+        <div class="flap"></div>
+        <div class="seal">💌</div>
+      </div>
+      <p style="opacity: 0.7; margin: 0">Trykk for å åpne</p>
+    </div>
+
+    <main>
+      <section id="hero">
+        <h1 id="title"></h1>
+        <p class="sub" id="tag" style="margin: 32px 0 36px"></p>
+        <div id="heroimg"></div>
+      </section>
+
+      <section>
+        <h2>Tid sammen</h2>
+        <p class="sub" id="since"></p>
+        <div class="grid" id="cnt"></div>
+        <div class="stats" id="stats"></div>
+      </section>
+
+      <section>
+        <h2>Ting jeg elsker med deg</h2>
+        <p class="sub">Kortversjonen. Langversjonen hadde ikke fått plass.</p>
+        <div class="reasons" id="reasons"></div>
+      </section>
+
+      <section>
+        <h2>Snurr for bursdagsgaven</h2>
+        <p class="sub">Alt på hjulet er ekte. Ingenting er byttbart.</p>
+        <div class="wheel">
+          <div class="pin">▼</div>
+          <canvas id="wc" width="640" height="640"></canvas>
+        </div>
+        <button id="spin">Snurr hjulet</button>
+        <div id="win" aria-live="polite"></div>
+      </section>
+
+      <section>
+        <h2>Kompatibilitet</h2>
+        <p class="sub">Vitenskapelig beregnet. Ingen kilder.</p>
+        <div class="pair">
+          <span id="n1"></span><span>♥</span><span id="n2"></span>
+        </div>
+        <div class="bar"><i id="fill"></i></div>
+        <div
+          id="pct"
+          style="
+            font-family: &quot;DM Serif Display&quot;, serif;
+            font-size: 44px;
+            color: var(--gold);
+          "
+        >
+          0%
+        </div>
+        <p id="cres" style="min-height: 28px"></p>
+        <button id="calc">Beregn kompatibilitet</button>
+      </section>
+
+      <section>
+        <h2>Noen av mine favoritt-oss</h2>
+        <p class="sub">Sveip, eller bruk pilene</p>
+        <div class="carw">
+          <div class="car" id="car"></div>
+          <button class="arr l" id="pv" aria-label="Forrige">←</button>
+          <button class="arr r" id="nx" aria-label="Neste">→</button>
+        </div>
+        <div class="ctr" id="ctr"></div>
+      </section>
+
+      <section style="padding-bottom: 120px">
+        <div class="moon"></div>
+        <h2 id="fin"></h2>
+        <p id="fsub" style="font-size: 19px"></p>
+        <div class="sign" id="sign"></div>
+      </section>
+    </main>
+
+    <script>
+      /* ============== REDIGER HER ============== */
+      const C = {
+        name: "Sussene",
+        title: "Gratulerer med dagen, sussene!",
+        tag: "Jeg savnet deg så mye at jeg lagde dette til deg mjaaaaoo",
+        start: "2026-08-22T21:00:00",
+        since: "siden klokken 21:00, 22. August 2026",
+        stats: [
+          ["∞", "susser så langt"],
+          ["5", "susser jeg vil ha (minst)"],
+          ["1", "bursdag å feire i dag"],
+        ],
+        reasons: [
+          "Måten du forteller meg om dagen din på og at du lager voicenotes til meg på morningen 🥹",
+          "At du husker alle de små tingene om meg 🥹",
+          "Den ekte latteren din. Den høye som høres ut som en hest med noe i halsen 🥹",
+          "At du ser for deg framtiden din med meg og snakker ofte om den 🥹",
+          "At alt føles som hjemme så fort du er der 🥹",
+          "At jeg fortsatt vil ha akkurat 5 susser.. Hver dag... 🥹",
+        ],
+        more: "…og hundre flere jeg gikk tom for plass til",
+        prizes: [
+          "5 susser",
+          "Frokost på senga",
+          "Filmkveld (du velger)",
+          "Massasjekupong",
+          "Piknik-date",
+          "Jeg lager middag",
+          "Helgetur",
+        ],
+        name1: "Du",
+        name2: "Jeg",
+        photos: [
+          // Legg til så mange du vil. Bilder: jpg/jpeg/png/webp/gif. Video: mp4/mov/m4v/webm.
+          // Filer som ikke finnes hoppes automatisk over.
+          ["kion.jpg", "En sovesuss"],
+          ["im8888age.jpg", "4 eyes"],
+          ["im444age.jpg", "Hjertet mitt og voff"],
+          ["kuene.mov", "Kuene som jeg reddet deg fra..."],
+          ["imag9789e.jpg", "Pøbelmakeren"],
+          ["EF268461-7D4D-44F0-8AA3-BEC6BE3568DC.mov", "Aldri fred å få..."],
+          ["789789.jpg", ""],
+          ["image.jpg", "Plass til både bilen og hengeren her altså"],
+          ["ima0000ge.jpg", "geitesussene"],
+          ["melis.jpg", "Mjaaaaaooooos"],
+          ["v15044gf0000dau6ui7og65koe2f3qo0.mov", "SHAAAKE ITTT"],
+          ["asdasdasd.jpg", "Min alt"],
+          ["foto13.jpg", "Bildetekst 13"],
+          ["video14.mp4", "Bildetekst 14"],
+        ],
+        fin: "Jeg elsker deg mer enn i går.",
+        fsub: "Klarer ikke å vente til du kommer hjem igjen",
+        sign: "- din ❤️",
+      };
+      /* ========================================= */
+      const $ = (s) => document.querySelector(s),
+        rnd = (a) => a[Math.floor(Math.random() * a.length)];
+      function pic(src, alt, emoji, cls) {
+        return `<img class="${cls || "pimg"}" src="${src}" alt="${alt || ""}" onerror="this.outerHTML='<div class=&quot;ptxt&quot;>${emoji || "📷"}<small>legg til ${src}</small></div>'">`;
+      }
+      $("#title").textContent = C.title;
+      $("#tag").textContent = C.tag;
+      $("#since").textContent = C.since;
+      $("#heroimg").innerHTML = pic("im789789age.jpg", "", "💖");
+      $("#stats").innerHTML = C.stats
+        .map((s) => `<div class="stat"><b>${s[0]}</b>${s[1]}</div>`)
+        .join("");
+      $("#reasons").innerHTML =
+        C.reasons.map((r) => `<div class="r">${r}</div>`).join("") +
+        `<p class="sub" style="text-align:center;margin-top:10px">${C.more}</p>`;
+      $("#n1").textContent = C.name1;
+      $("#n2").textContent = C.name2;
+      $("#fin").textContent = C.fin;
+      $("#fsub").textContent = C.fsub;
+      $("#sign").textContent = C.sign;
+
+      /* karusell: bilder og video i lik ramme, volumslider på video */
+      const isVid = (f) => /\.(mp4|m4v|mov|webm)$/i.test(f);
+      const gone = "this.closest('figure').remove();upd()";
+      const frame = (p) =>
+        isVid(p[0])
+          ? `<div class="mf"><video src="${p[0]}" muted loop playsinline preload="metadata" onerror="${gone}"></video><div class="vol"><button class="mute" type="button" aria-label="Lyd av/på">🔊</button><input type="range" min="0" max="1" step="0.05" value="0.5" aria-label="Volum"></div></div>`
+          : `<div class="mf"><img src="${p[0]}" alt="${p[1]}" onerror="${gone}"></div>`;
+      $("#car").innerHTML = C.photos
+        .map(
+          (p) => `<figure>${frame(p)}<figcaption>${p[1]}</figcaption></figure>`,
+        )
+        .join("");
+
+      function upd() {
+        const c = $("#car"),
+          n = c.children.length;
+        if (!n) {
+          $("#ctr").textContent = "";
+          return;
+        }
+        const i = Math.min(
+          n - 1,
+          Math.round(c.scrollLeft / (c.clientWidth + 14)),
+        );
+        $("#ctr").textContent = i + 1 + " / " + n;
+      }
+      $("#car").addEventListener("scroll", upd, { passive: true });
+      upd();
+
+      let vol = 0.5,
+        um = false; // volum (0-1) starter på medium; um = hun har selv slått av lyden
+      const ico = (v) => {
+        v.parentElement.querySelector(".mute").textContent = v.muted
+          ? "🔇"
+          : "🔊";
+      };
+      function ap(v) {
+        v.volume = vol;
+        v.muted = um || vol === 0;
+        ico(v);
+      }
+      function all() {
+        document.querySelectorAll("#car video").forEach((v) => {
+          ap(v);
+          v.parentElement.querySelector("input").value = vol;
+        });
+      }
+      document.querySelectorAll("#car video").forEach((v) => {
+        const box = v.parentElement;
+        box.querySelector("input").oninput = (e) => {
+          vol = +e.target.value;
+          um = false;
+          all();
+        };
+        box.querySelector(".mute").onclick = () => {
+          um = !v.muted;
+          if (!um && vol === 0) vol = 0.5;
+          all();
+        };
+      });
+      all();
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            const v = e.target;
+            if (e.isIntersecting) {
+              ap(v);
+              v.play().catch(() => {
+                v.muted = true;
+                ico(v);
+                v.play().catch(() => {});
+              }); // lyd blokkert -> spill dempet, 🔇-knappen slår på lyd
+            } else {
+              v.pause();
+              v.currentTime = 0;
+            }
+          }),
+        { threshold: 0.6, root: $("#car") },
+      );
+      document.querySelectorAll("#car video").forEach((v) => io.observe(v));
+      $("#nx").onclick = () =>
+        $("#car").scrollBy({ left: $("#car").clientWidth, behavior: "smooth" });
+      $("#pv").onclick = () =>
+        $("#car").scrollBy({
+          left: -$("#car").clientWidth,
+          behavior: "smooth",
+        });
+
+      /* teller */
+      const labels = ["År", "Måneder", "Dager", "Timer", "Min", "Sek"];
+      $("#cnt").innerHTML = labels
+        .map((l) => `<div class="cell"><b>0</b><span>${l}</span></div>`)
+        .join("");
+      function diff(a, b) {
+        let y = b.getFullYear() - a.getFullYear(),
+          m = b.getMonth() - a.getMonth(),
+          d = b.getDate() - a.getDate(),
+          h = b.getHours() - a.getHours(),
+          i = b.getMinutes() - a.getMinutes(),
+          s = b.getSeconds() - a.getSeconds();
+        if (s < 0) {
+          s += 60;
+          i--;
+        }
+        if (i < 0) {
+          i += 60;
+          h--;
+        }
+        if (h < 0) {
+          h += 24;
+          d--;
+        }
+        if (d < 0) {
+          d += new Date(b.getFullYear(), b.getMonth(), 0).getDate();
+          m--;
+        }
+        if (m < 0) {
+          m += 12;
+          y--;
+        }
+        return [y, m, d, h, i, s];
+      }
+      function tickC() {
+        const v = diff(new Date(C.start), new Date());
+        document
+          .querySelectorAll("#cnt b")
+          .forEach(
+            (e, i) =>
+              (e.textContent = String(v[i]).padStart(i > 2 ? 2 : 1, "0")),
+          );
+      }
+      tickC();
+      setInterval(tickC, 1000);
+
+      /* hjul */
+      const cv = $("#wc"),
+        g = cv.getContext("2d"),
+        N = C.prizes.length,
+        seg = 360 / N,
+        cols = [
+          "#ff5d8f",
+          "#7a4bd6",
+          "#ffb3c7",
+          "#3d2b80",
+          "#ffd98a",
+          "#c04b8f",
+          "#5a3fb0",
+        ];
+      function drawWheel() {
+        const R = 320;
+        g.clearRect(0, 0, 640, 640);
+        for (let i = 0; i < N; i++) {
+          const a0 = ((-90 + i * seg) * Math.PI) / 180,
+            a1 = ((-90 + (i + 1) * seg) * Math.PI) / 180;
+          g.beginPath();
+          g.moveTo(R, R);
+          g.arc(R, R, R, a0, a1);
+          g.fillStyle = cols[i % cols.length];
+          g.fill();
+          g.save();
+          g.translate(R, R);
+          g.rotate((a0 + a1) / 2);
+          g.textAlign = "right";
+          g.fillStyle = ["#ffb3c7", "#ffd98a"].includes(cols[i % cols.length])
+            ? "#2a1d55"
+            : "#fff";
+          g.font = "800 30px Nunito,sans-serif";
+          g.fillText(C.prizes[i], R - 30, 10);
+          g.restore();
+        }
+      }
+      drawWheel();
+      let rot = 0,
+        spinning = false;
+      $("#spin").onclick = () => {
+        if (spinning) return;
+        spinning = true;
+        $("#win").textContent = "";
+        const w = Math.floor(Math.random() * N),
+          center = (w + 0.5) * seg + (Math.random() - 0.5) * seg * 0.6;
+        rot += 360 * 6 + ((((360 - center - rot) % 360) + 360) % 360);
+        cv.style.transform = `rotate(${rot}deg)`;
+        setTimeout(() => {
+          spinning = false;
+          $("#win").textContent = "Du vant: " + C.prizes[w] + " 🎉";
+          burst(140);
+        }, 5200);
+      };
+
+      /* kompatibilitet */
+      $("#calc").onclick = () => {
+        const f = $("#fill"),
+          p = $("#pct"),
+          r = $("#cres");
+        let n = 0;
+        r.textContent = "Beregner…";
+        f.style.width = "0";
+        const t = setInterval(() => {
+          n += 2;
+          f.style.width = Math.min(n, 100) + "%";
+          p.textContent = Math.min(n, 100) + "%";
+          if (n >= 100) {
+            clearInterval(t);
+            setTimeout(() => {
+              p.textContent = "∞%";
+              r.textContent = "Feil: verdien er for høy for skalaen.";
+              burst(80);
+            }, 500);
+          }
+        }, 30);
+      };
+
+      /* konfetti */
+      const cc = $("#conf"),
+        cx = cc.getContext("2d");
+      let P = [],
+        run = false;
+      function sz() {
+        cc.width = innerWidth;
+        cc.height = innerHeight;
+      }
+      sz();
+      addEventListener("resize", sz);
+      function burst(n) {
+        const c = ["#ff5d8f", "#ffd98a", "#ffb3c7", "#fdf3f6", "#9d7bff"];
+        for (let i = 0; i < n; i++)
+          P.push({
+            x: cc.width / 2,
+            y: cc.height * 0.6,
+            vx: (Math.random() - 0.5) * 16,
+            vy: -Math.random() * 15 - 3,
+            w: 6 + Math.random() * 7,
+            h: 4 + Math.random() * 6,
+            r: Math.random() * 6,
+            vr: (Math.random() - 0.5) * 0.4,
+            c: rnd(c),
+          });
+        if (!run) {
+          run = true;
+          loop();
+        }
+      }
+      function loop() {
+        cx.clearRect(0, 0, cc.width, cc.height);
+        P.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.2;
+          p.r += p.vr;
+          cx.save();
+          cx.translate(p.x, p.y);
+          cx.rotate(p.r);
+          cx.fillStyle = p.c;
+          cx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          cx.restore();
+        });
+        P = P.filter((p) => p.y < cc.height + 30);
+        if (P.length) requestAnimationFrame(loop);
+        else run = false;
+      }
+
+      /* konvolutt */
+      function openIt() {
+        const e = $("#env");
+        if (e.classList.contains("open")) return;
+        e.classList.add("open");
+        burst(120);
+        setTimeout(() => {
+          $("#gate").classList.add("gone");
+          document.body.classList.remove("lock");
+          startHearts();
+        }, 900);
+      }
+      $("#env").onclick = openIt;
+      $("#env").onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") openIt();
+      };
+      function startHearts() {
+        const em = ["❤️", "💖", "💕", "💗", "✨"];
+        setInterval(() => {
+          const h = document.createElement("div");
+          h.className = "fh";
+          h.textContent = rnd(em);
+          h.style.left = Math.random() * 95 + "vw";
+          h.style.top = Math.random() * 90 + "vh";
+          h.style.fontSize = 18 + Math.random() * 34 + "px";
+          document.body.appendChild(h);
+          setTimeout(() => h.remove(), 4500);
+        }, 700);
+      }
+    </script>
+  </body>
+</html>
